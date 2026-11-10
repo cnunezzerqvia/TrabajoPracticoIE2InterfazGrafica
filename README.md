@@ -14,4 +14,3 @@ Proyecto en construcción. Estructura de paquetes:
 - `...controlador`: coordina vista, modelo y DAO (próximamente).
 - `...vista`: interfaz Swing hecha con el diseñador de NetBeans (próximamente).
 
-**Figma**: (pegar acá el link al archivo de Figma)
