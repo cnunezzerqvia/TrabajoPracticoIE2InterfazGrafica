@@ -2,11 +2,15 @@ package com.mycompany.trabajopractico.controlador;
 
 import com.mycompany.trabajopractico.dao.SimulacionDAO;
 import com.mycompany.trabajopractico.modelo.Clima;
+import com.mycompany.trabajopractico.modelo.Conejo;
 import com.mycompany.trabajopractico.modelo.Ecosistema;
 import com.mycompany.trabajopractico.modelo.Entidad;
+import com.mycompany.trabajopractico.modelo.Lobo;
+import com.mycompany.trabajopractico.modelo.Planta;
 import com.mycompany.trabajopractico.modelo.Simulacion;
 import com.mycompany.trabajopractico.vista.IVistaEcosistema;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -39,6 +43,7 @@ public class ControladorSimulacion {
     /** Se llama una sola vez, al abrir la aplicación. */
     public void iniciar() {
         vista.cargarClimas(nombresDeClimas());
+        vista.cargarTiposEntidad(Arrays.asList(Planta.TIPO, Conejo.TIPO, Lobo.TIPO));
         vista.mostrarPantallaConfiguracion();
     }
 
@@ -136,6 +141,80 @@ public class ControladorSimulacion {
         }
     }
 
+    // ===================== Intervención del jugador =====================
+
+    public void cambiarClima(String nombreClima) {
+        if (!validarIntervencion()) {
+            return;
+        }
+
+        Clima nuevo = Clima.desdeNombre(nombreClima);
+        if (nuevo == null) {
+            vista.mostrarError("Elegí un clima de la lista.");
+            return;
+        }
+        if (nuevo == simulacion.getEcosistema().getClimaActual()) {
+            vista.mostrarError("El clima ya es " + nuevo.getNombre() + ". Elegí uno distinto.");
+            return;
+        }
+
+        simulacion.cambiarClima(nuevo);
+        guardar();
+        actualizarVista();
+        vista.mostrarMensaje("El clima cambió a " + nuevo.getNombre() + ".");
+    }
+
+    public void agregarEntidad(String tipo) {
+        if (!validarIntervencion()) {
+            return;
+        }
+        if (tipo == null || tipo.trim().isEmpty()) {
+            vista.mostrarError("Elegí qué tipo de entidad querés agregar.");
+            return;
+        }
+        if (Lobo.TIPO.equals(tipo) && !simulacion.getEcosistema().puedeAgregarLobo()) {
+            vista.mostrarError("Ya hay " + Ecosistema.MAX_LOBOS
+                    + " lobos en el ecosistema: es el máximo permitido.");
+            return;
+        }
+        if (!simulacion.agregarEntidad(tipo)) {
+            vista.mostrarError("No se pudo agregar la entidad \"" + tipo + "\".");
+            return;
+        }
+
+        guardar();
+        actualizarVista();
+        vista.mostrarMensaje("Se agregó una entidad de tipo " + tipo + ".");
+    }
+
+    private boolean validarIntervencion() {
+        if (simulacion == null) {
+            vista.mostrarError("Todavía no hay una simulación en curso.");
+            return false;
+        }
+        if (!simulacion.puedeIntervenir()) {
+            vista.mostrarError(mensajeIntervencion());
+            return false;
+        }
+        return true;
+    }
+
+    private String mensajeIntervencion() {
+        if (simulacion.estaTerminada()) {
+            return "La simulación terminó: ya no se puede intervenir.";
+        }
+        if (simulacion.puedeIntervenir()) {
+            return "¡Podés intervenir! Elegí UNA acción (cambiar el clima o agregar una entidad) "
+                    + "o simplemente avanzá.";
+        }
+        if (simulacion.esTurnoDeIntervencion()) {
+            return "Ya usaste la intervención de este turno. Avanzá para continuar.";
+        }
+        int faltan = simulacion.turnosHastaIntervencion();
+        return "Podés intervenir cada 3 turnos. Próxima intervención en " + faltan
+                + (faltan == 1 ? " turno." : " turnos.");
+    }
+
     // ===================== Comunes =====================
 
     /** Guarda con el DAO; si falla, avisa a la vista. */
@@ -157,6 +236,7 @@ public class ControladorSimulacion {
         vista.actualizarTablaEntidades(armarFilasEntidades(eco));
         vista.actualizarEventos(eco.getTurnoActual(), eco.getEventosTurno());
         vista.habilitarAvance(!simulacion.estaTerminada());
+        vista.actualizarIntervencion(simulacion.puedeIntervenir(), mensajeIntervencion());
     }
 
     /** Convierte las entidades del modelo en filas simples para la tabla. */

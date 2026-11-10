@@ -55,6 +55,12 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
     @Override
     public void cargarClimas(List<String> climas) {
         cmbClima.setModel(new DefaultComboBoxModel<>(climas.toArray(new String[0])));
+        cmbNuevoClima.setModel(new DefaultComboBoxModel<>(climas.toArray(new String[0])));
+    }
+
+    @Override
+    public void cargarTiposEntidad(List<String> tipos) {
+        cmbTipoEntidad.setModel(new DefaultComboBoxModel<>(tipos.toArray(new String[0])));
     }
 
     // ===================== Configuración =====================
@@ -107,6 +113,18 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
     @Override
     public void habilitarAvance(boolean habilitado) {
         btnAvanzar.setEnabled(habilitado);
+    }
+
+    @Override
+    public void actualizarIntervencion(boolean habilitada, String mensaje) {
+        cmbNuevoClima.setEnabled(habilitada);
+        btnCambiarClima.setEnabled(habilitada);
+        cmbTipoEntidad.setEnabled(habilitada);
+        btnAgregarEntidad.setEnabled(habilitada);
+
+        String color = habilitada ? "#1b7f3b" : "#666666";
+        String texto = habilitada ? "<b>" + mensaje + "</b>" : mensaje;
+        lblIntervencion.setText("<html><span style='color:" + color + "'>" + texto + "</span></html>");
     }
 
     /** Vacía la tabla (creada en el diseñador) y le agrega las filas recibidas. */
@@ -176,6 +194,16 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
         scrollEventos = new javax.swing.JScrollPane();
         listaEventos = new javax.swing.JList<>();
         panelSur = new javax.swing.JPanel();
+        panelIntervencion = new javax.swing.JPanel();
+        lblIntervencion = new javax.swing.JLabel();
+        panelControlesIntervencion = new javax.swing.JPanel();
+        lblNuevoClima = new javax.swing.JLabel();
+        cmbNuevoClima = new javax.swing.JComboBox<>();
+        btnCambiarClima = new javax.swing.JButton();
+        lblSeparadorIntervencion = new javax.swing.JLabel();
+        lblTipoEntidad = new javax.swing.JLabel();
+        cmbTipoEntidad = new javax.swing.JComboBox<>();
+        btnAgregarEntidad = new javax.swing.JButton();
         panelBotonesSimulacion = new javax.swing.JPanel();
         btnAvanzar = new javax.swing.JButton();
         lblEstado = new javax.swing.JLabel();
@@ -356,6 +384,50 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
         panelSimulacion.add(scrollEventos, java.awt.BorderLayout.EAST);
 
         panelSur.setLayout(new java.awt.BorderLayout(10, 6));
+        panelIntervencion.setBorder(javax.swing.BorderFactory.createTitledBorder("Intervención del jugador (cada 3 turnos)"));
+        panelIntervencion.setLayout(new java.awt.BorderLayout(0, 4));
+        lblIntervencion.setText("Podés intervenir cada 3 turnos.");
+        panelIntervencion.add(lblIntervencion, java.awt.BorderLayout.NORTH);
+
+        panelControlesIntervencion.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 2));
+        lblNuevoClima.setText("Nuevo clima:");
+        panelControlesIntervencion.add(lblNuevoClima);
+
+        cmbNuevoClima.setEnabled(false);
+        panelControlesIntervencion.add(cmbNuevoClima);
+
+        btnCambiarClima.setText("Cambiar clima");
+        btnCambiarClima.setEnabled(false);
+        btnCambiarClima.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCambiarClimaActionPerformed(evt);
+            }
+        });
+        panelControlesIntervencion.add(btnCambiarClima);
+
+        lblSeparadorIntervencion.setForeground(new java.awt.Color(102, 102, 102));
+        lblSeparadorIntervencion.setText("   o bien   ");
+        panelControlesIntervencion.add(lblSeparadorIntervencion);
+
+        lblTipoEntidad.setText("Agregar:");
+        panelControlesIntervencion.add(lblTipoEntidad);
+
+        cmbTipoEntidad.setEnabled(false);
+        panelControlesIntervencion.add(cmbTipoEntidad);
+
+        btnAgregarEntidad.setText("Agregar entidad");
+        btnAgregarEntidad.setEnabled(false);
+        btnAgregarEntidad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarEntidadActionPerformed(evt);
+            }
+        });
+        panelControlesIntervencion.add(btnAgregarEntidad);
+
+        panelIntervencion.add(panelControlesIntervencion, java.awt.BorderLayout.CENTER);
+
+        panelSur.add(panelIntervencion, java.awt.BorderLayout.CENTER);
+
         panelBotonesSimulacion.setLayout(new java.awt.GridLayout(0, 1, 0, 6));
         btnAvanzar.setFont(btnAvanzar.getFont().deriveFont(btnAvanzar.getFont().getStyle() | java.awt.Font.BOLD, btnAvanzar.getFont().getSize()+3));
         btnAvanzar.setText("Avanzar turno  ▶");
@@ -386,14 +458,26 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
                 txtLobos.getText(), (String) cmbClima.getSelectedItem(), txtTurnos.getText());
     }//GEN-LAST:event_btnIniciarActionPerformed
 
+    private void btnCambiarClimaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCambiarClimaActionPerformed
+        controlador.cambiarClima((String) cmbNuevoClima.getSelectedItem());
+    }//GEN-LAST:event_btnCambiarClimaActionPerformed
+
+    private void btnAgregarEntidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarEntidadActionPerformed
+        controlador.agregarEntidad((String) cmbTipoEntidad.getSelectedItem());
+    }//GEN-LAST:event_btnAgregarEntidadActionPerformed
+
     private void btnAvanzarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAvanzarActionPerformed
         controlador.avanzarTurno();
     }//GEN-LAST:event_btnAvanzarActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAgregarEntidad;
     private javax.swing.JButton btnAvanzar;
+    private javax.swing.JButton btnCambiarClima;
     private javax.swing.JButton btnIniciar;
     private javax.swing.JComboBox<String> cmbClima;
+    private javax.swing.JComboBox<String> cmbNuevoClima;
+    private javax.swing.JComboBox<String> cmbTipoEntidad;
     private javax.swing.JLabel lblAyudaClima;
     private javax.swing.JLabel lblCampoClima;
     private javax.swing.JLabel lblCampoConejos;
@@ -404,13 +488,17 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
     private javax.swing.JLabel lblConejos;
     private javax.swing.JLabel lblErroresConfig;
     private javax.swing.JLabel lblEstado;
+    private javax.swing.JLabel lblIntervencion;
     private javax.swing.JLabel lblLobos;
+    private javax.swing.JLabel lblNuevoClima;
     private javax.swing.JLabel lblPlantas;
     private javax.swing.JLabel lblRangoConejos;
     private javax.swing.JLabel lblRangoLobos;
     private javax.swing.JLabel lblRangoPlantas;
     private javax.swing.JLabel lblRangoTurnos;
+    private javax.swing.JLabel lblSeparadorIntervencion;
     private javax.swing.JLabel lblSubtituloConfig;
+    private javax.swing.JLabel lblTipoEntidad;
     private javax.swing.JLabel lblTituloConfig;
     private javax.swing.JLabel lblTurno;
     private javax.swing.JList<String> listaEventos;
@@ -420,8 +508,10 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
     private javax.swing.JPanel panelCentroConfig;
     private javax.swing.JPanel panelConfiguracion;
     private javax.swing.JPanel panelContadores;
+    private javax.swing.JPanel panelControlesIntervencion;
     private javax.swing.JPanel panelEncabezadoConfig;
     private javax.swing.JPanel panelFormulario;
+    private javax.swing.JPanel panelIntervencion;
     private javax.swing.JPanel panelSimulacion;
     private javax.swing.JPanel panelSur;
     private javax.swing.JScrollPane scrollEntidades;

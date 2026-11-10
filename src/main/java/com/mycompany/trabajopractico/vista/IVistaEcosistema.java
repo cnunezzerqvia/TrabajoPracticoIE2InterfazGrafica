@@ -12,6 +12,8 @@ public interface IVistaEcosistema {
     // ----- Datos para los combos -----
     void cargarClimas(List<String> climas);
 
+    void cargarTiposEntidad(List<String> tipos);
+
     // ----- Navegación -----
     void mostrarPantallaConfiguracion();
 
@@ -31,6 +33,8 @@ public interface IVistaEcosistema {
     void actualizarEventos(int turno, List<String> eventos);
 
     void habilitarAvance(boolean habilitado);
+
+    void actualizarIntervencion(boolean habilitada, String mensaje);
 
     // ----- Mensajes -----
     void mostrarMensaje(String mensaje);
