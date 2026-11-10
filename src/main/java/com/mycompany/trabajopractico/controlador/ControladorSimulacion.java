@@ -44,7 +44,25 @@ public class ControladorSimulacion {
     public void iniciar() {
         vista.cargarClimas(nombresDeClimas());
         vista.cargarTiposEntidad(Arrays.asList(Planta.TIPO, Conejo.TIPO, Lobo.TIPO));
-        vista.mostrarPantallaConfiguracion();
+
+        // Si hay una partida guardada, se retoma donde estaba
+        if (dao.existePartidaGuardada()) {
+            Simulacion guardada = dao.cargar();
+
+            if (guardada != null) {
+                simulacion = guardada;
+                actualizarVista();
+                vista.mostrarPantallaSimulacion();
+                vista.mostrarMensaje("Se retomó la simulación guardada (turno "
+                        + guardada.getEcosistema().getTurnoActual() + " de "
+                        + guardada.getTurnosTotales() + ").");
+                return;
+            }
+
+            vista.mostrarError("No se pudo retomar la simulación guardada.\n"
+                    + dao.getUltimoError() + "\nPodés configurar una simulación nueva.");
+        }
+        vista.mostrarPantallaConfiguracion(false);
     }
 
     // ===================== Configuración inicial =====================
@@ -213,6 +231,48 @@ public class ControladorSimulacion {
         int faltan = simulacion.turnosHastaIntervencion();
         return "Podés intervenir cada 3 turnos. Próxima intervención en " + faltan
                 + (faltan == 1 ? " turno." : " turnos.");
+    }
+
+    // ===================== Nueva / guardar / salir =====================
+
+    public void nuevaSimulacion() {
+        if (simulacion != null && !simulacion.estaTerminada()) {
+            boolean confirma = vista.confirmar("Hay una simulación en curso (turno "
+                    + simulacion.getEcosistema().getTurnoActual() + " de "
+                    + simulacion.getTurnosTotales() + ").\n"
+                    + "Si empezás una nueva, la actual se reemplaza al confirmar la configuración.\n"
+                    + "¿Querés continuar?");
+            if (!confirma) {
+                return;
+            }
+        }
+        vista.limpiarErroresConfiguracion();
+        vista.mostrarPantallaConfiguracion(simulacion != null);
+    }
+
+    public void volverASimulacion() {
+        if (simulacion == null) {
+            vista.mostrarError("Todavía no hay una simulación en curso.");
+            return;
+        }
+        vista.mostrarPantallaSimulacion();
+    }
+
+    public void guardarAhora() {
+        if (simulacion == null) {
+            vista.mostrarError("Todavía no hay una simulación para guardar.");
+            return;
+        }
+        if (guardar()) {
+            vista.mostrarMensaje("Simulación guardada correctamente.");
+        }
+    }
+
+    public void salir() {
+        if (simulacion != null) {
+            guardar();
+        }
+        vista.cerrar();
     }
 
     // ===================== Comunes =====================

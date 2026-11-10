@@ -15,7 +15,7 @@ public interface IVistaEcosistema {
     void cargarTiposEntidad(List<String> tipos);
 
     // ----- Navegación -----
-    void mostrarPantallaConfiguracion();
+    void mostrarPantallaConfiguracion(boolean puedeVolver);
 
     void mostrarPantallaSimulacion();
 
@@ -40,4 +40,8 @@ public interface IVistaEcosistema {
     void mostrarMensaje(String mensaje);
 
     void mostrarError(String mensaje);
+
+    boolean confirmar(String mensaje);
+
+    void cerrar();
 }

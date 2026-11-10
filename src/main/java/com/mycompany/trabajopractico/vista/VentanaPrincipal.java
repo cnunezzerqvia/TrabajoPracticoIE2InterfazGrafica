@@ -40,13 +40,16 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
     }
 
     @Override
-    public void mostrarPantallaConfiguracion() {
+    public void mostrarPantallaConfiguracion(boolean puedeVolver) {
+        btnVolverSimulacion.setEnabled(puedeVolver);
+        itemGuardar.setEnabled(puedeVolver);
         cambiarPantalla(PANTALLA_CONFIGURACION);
         txtPlantas.requestFocusInWindow();
     }
 
     @Override
     public void mostrarPantallaSimulacion() {
+        itemGuardar.setEnabled(true);
         cambiarPantalla(PANTALLA_SIMULACION);
     }
 
@@ -148,6 +151,19 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
         JOptionPane.showMessageDialog(this, mensaje, "Atención", JOptionPane.ERROR_MESSAGE);
     }
 
+    @Override
+    public boolean confirmar(String mensaje) {
+        int respuesta = JOptionPane.showConfirmDialog(this, mensaje, "Confirmar",
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        return respuesta == JOptionPane.YES_OPTION;
+    }
+
+    @Override
+    public void cerrar() {
+        dispose();
+        System.exit(0);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -157,6 +173,12 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        barraMenu = new javax.swing.JMenuBar();
+        menuSimulacion = new javax.swing.JMenu();
+        itemNueva = new javax.swing.JMenuItem();
+        itemGuardar = new javax.swing.JMenuItem();
+        separadorMenu = new javax.swing.JPopupMenu.Separator();
+        itemSalir = new javax.swing.JMenuItem();
         panelConfiguracion = new javax.swing.JPanel();
         panelEncabezadoConfig = new javax.swing.JPanel();
         lblTituloConfig = new javax.swing.JLabel();
@@ -181,6 +203,7 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
         panelAccionesConfig = new javax.swing.JPanel();
         lblErroresConfig = new javax.swing.JLabel();
         panelBotonesConfig = new javax.swing.JPanel();
+        btnVolverSimulacion = new javax.swing.JButton();
         btnIniciar = new javax.swing.JButton();
         panelSimulacion = new javax.swing.JPanel();
         panelContadores = new javax.swing.JPanel();
@@ -296,6 +319,15 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
         panelAccionesConfig.add(lblErroresConfig, java.awt.BorderLayout.CENTER);
 
         panelBotonesConfig.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 10, 5));
+        btnVolverSimulacion.setText("Volver a la simulación");
+        btnVolverSimulacion.setEnabled(false);
+        btnVolverSimulacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVolverSimulacionActionPerformed(evt);
+            }
+        });
+        panelBotonesConfig.add(btnVolverSimulacion);
+
         btnIniciar.setFont(btnIniciar.getFont().deriveFont(btnIniciar.getFont().getStyle() | java.awt.Font.BOLD, btnIniciar.getFont().getSize()+2));
         btnIniciar.setText("Iniciar simulación");
         btnIniciar.addActionListener(new java.awt.event.ActionListener() {
@@ -448,10 +480,46 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
 
         getContentPane().add(panelSimulacion, "simulacion");
 
+        menuSimulacion.setText("Simulación");
+        itemNueva.setText("Nueva simulación...");
+        itemNueva.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemNuevaActionPerformed(evt);
+            }
+        });
+        menuSimulacion.add(itemNueva);
+
+        itemGuardar.setText("Guardar ahora");
+        itemGuardar.setEnabled(false);
+        itemGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemGuardarActionPerformed(evt);
+            }
+        });
+        menuSimulacion.add(itemGuardar);
+
+        menuSimulacion.add(separadorMenu);
+
+        itemSalir.setText("Salir");
+        itemSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemSalirActionPerformed(evt);
+            }
+        });
+        menuSimulacion.add(itemSalir);
+
+        barraMenu.add(menuSimulacion);
+
+        setJMenuBar(barraMenu);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     // ===================== Eventos: todos le pasan la acción al controlador =====================
+
+    private void btnVolverSimulacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverSimulacionActionPerformed
+        controlador.volverASimulacion();
+    }//GEN-LAST:event_btnVolverSimulacionActionPerformed
 
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
         controlador.iniciarSimulacion(txtPlantas.getText(), txtConejos.getText(),
@@ -470,14 +538,31 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
         controlador.avanzarTurno();
     }//GEN-LAST:event_btnAvanzarActionPerformed
 
+    private void itemNuevaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemNuevaActionPerformed
+        controlador.nuevaSimulacion();
+    }//GEN-LAST:event_itemNuevaActionPerformed
+
+    private void itemGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemGuardarActionPerformed
+        controlador.guardarAhora();
+    }//GEN-LAST:event_itemGuardarActionPerformed
+
+    private void itemSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemSalirActionPerformed
+        controlador.salir();
+    }//GEN-LAST:event_itemSalirActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuBar barraMenu;
     private javax.swing.JButton btnAgregarEntidad;
     private javax.swing.JButton btnAvanzar;
     private javax.swing.JButton btnCambiarClima;
     private javax.swing.JButton btnIniciar;
+    private javax.swing.JButton btnVolverSimulacion;
     private javax.swing.JComboBox<String> cmbClima;
     private javax.swing.JComboBox<String> cmbNuevoClima;
     private javax.swing.JComboBox<String> cmbTipoEntidad;
+    private javax.swing.JMenuItem itemGuardar;
+    private javax.swing.JMenuItem itemNueva;
+    private javax.swing.JMenuItem itemSalir;
     private javax.swing.JLabel lblAyudaClima;
     private javax.swing.JLabel lblCampoClima;
     private javax.swing.JLabel lblCampoConejos;
@@ -502,6 +587,7 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
     private javax.swing.JLabel lblTituloConfig;
     private javax.swing.JLabel lblTurno;
     private javax.swing.JList<String> listaEventos;
+    private javax.swing.JMenu menuSimulacion;
     private javax.swing.JPanel panelAccionesConfig;
     private javax.swing.JPanel panelBotonesConfig;
     private javax.swing.JPanel panelBotonesSimulacion;
@@ -516,6 +602,7 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
     private javax.swing.JPanel panelSur;
     private javax.swing.JScrollPane scrollEntidades;
     private javax.swing.JScrollPane scrollEventos;
+    private javax.swing.JPopupMenu.Separator separadorMenu;
     private javax.swing.JTable tablaEntidades;
     private javax.swing.JTextField txtConejos;
     private javax.swing.JTextField txtLobos;

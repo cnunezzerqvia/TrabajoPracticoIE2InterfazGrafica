@@ -13,3 +13,4 @@ Proyecto en construcción. Estructura de paquetes:
 - `...dao`: guardado y lectura en archivo `.txt` (próximamente).
 - `...controlador`: coordina vista, modelo y DAO (próximamente).
 - `...vista`: interfaz Swing hecha con el diseñador de NetBeans (próximamente).
+
