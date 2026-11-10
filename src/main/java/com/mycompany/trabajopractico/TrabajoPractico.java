@@ -1,59 +1,43 @@
 package com.mycompany.trabajopractico;
 
+import com.mycompany.trabajopractico.controlador.ControladorSimulacion;
 import com.mycompany.trabajopractico.dao.SimulacionDAO;
 import com.mycompany.trabajopractico.dao.SimulacionDAOTxt;
-import com.mycompany.trabajopractico.modelo.Clima;
-import com.mycompany.trabajopractico.modelo.Ecosistema;
-import com.mycompany.trabajopractico.modelo.Estadisticas;
-import com.mycompany.trabajopractico.modelo.Simulacion;
-import java.util.List;
+import com.mycompany.trabajopractico.vista.VentanaPrincipal;
 
 /**
- * PRUEBA TEMPORAL por consola del modelo refactorizado.
- * Se va a reemplazar por la ventana Swing cuando esté la vista.
- * (Los System.out están acá, en el paquete principal, NO en el modelo).
+ * Paquete principal: crea las piezas (vista, DAO y controlador),
+ * las conecta y muestra la ventana.
  */
 public class TrabajoPractico {
 
+    /** Ruta RELATIVA a la carpeta del proyecto (NetBeans ejecuta desde ahí). */
+    private static final String ARCHIVO_PARTIDA = "datos/simulacion.txt";
+
     public static void main(String[] args) {
-        Ecosistema eco = new Ecosistema(Clima.SOLEADO);
-        eco.poblar(10, 5, 2);
-        imprimir(eco.getEventosTurno());
-
-        Simulacion simulacion = new Simulacion(eco, 12);
-        while (!simulacion.estaTerminada()) {
-            System.out.println("===== Turno " + (eco.getTurnoActual() + 1) + " =====");
-            imprimir(simulacion.avanzarTurno());
-            System.out.println("Plantas: " + eco.getPlantas().size() + " | Conejos: "
-                    + eco.getConejos().size() + " | Lobos: " + eco.getLobos().size());
+        // Look and Feel Nimbus (el mismo que propone NetBeans en sus plantillas)
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info
+                    : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+            // Si Nimbus no está disponible se usa el aspecto por defecto
         }
 
-        System.out.println();
-        System.out.println(simulacion.getCausaFin());
-        Estadisticas est = eco.getEstadisticas();
-        for (int i = 0; i < Estadisticas.TIPOS.length; i++) {
-            System.out.println(Estadisticas.TIPOS[i] + ": nacimientos=" + est.getNacimientos(i)
-                    + ", muertes=" + est.getMuertes(i) + ", más longeva="
-                    + est.getNombreMasLongeva(i) + " (" + est.getEdadMasLongeva(i) + ")");
-        }
-        System.out.println("Lobo con más cacerías: " + est.getLoboMasCacerias()
-                + " (" + est.getMaxCacerias() + ")");
-        System.out.println("Turno de mayor actividad: " + est.getTurnoMayorActividad());
+        java.awt.EventQueue.invokeLater(() -> {
+            VentanaPrincipal ventana = new VentanaPrincipal();
+            SimulacionDAO dao = new SimulacionDAOTxt(ARCHIVO_PARTIDA);
+            ControladorSimulacion controlador = new ControladorSimulacion(ventana, dao);
 
-        SimulacionDAO dao = new SimulacionDAOTxt("datos/simulacion.txt");
-        System.out.println("¿Se guardó? " + dao.guardar(simulacion));
-        Simulacion cargada = dao.cargar();
-        if (cargada == null) {
-            System.out.println("Error al cargar: " + dao.getUltimoError());
-        } else {
-            System.out.println("Cargada OK: turno " + cargada.getEcosistema().getTurnoActual()
-                    + ", " + cargada.getEcosistema().getEntidades().size() + " entidades vivas.");
-        }
-    }
+            ventana.setControlador(controlador);
+            ventana.setLocationRelativeTo(null);
+            ventana.setVisible(true);
 
-    private static void imprimir(List<String> eventos) {
-        for (String evento : eventos) {
-            System.out.println("  - " + evento);
-        }
+            controlador.iniciar();
+        });
     }
 }
