@@ -143,4 +143,24 @@ public class Estadisticas {
         }
         return copia;
     }
+
+    // ===================== Usado por el DAO al retomar =====================
+
+    public void restaurarTipo(int indiceTipo, int nac, int mue, String nombreLongeva, int edadLongeva) {
+        nacimientos[indiceTipo] = nac;
+        muertes[indiceTipo] = mue;
+        nombreMasLongeva[indiceTipo] = nombreLongeva;
+        edadMasLongeva[indiceTipo] = edadLongeva;
+    }
+
+    public void restaurarRecords(String lobo, int cacerias, int turnoActividad, int eventosActividad) {
+        loboMasCacerias = lobo;
+        maxCacerias = cacerias;
+        turnoMayorActividad = turnoActividad;
+        eventosMayorActividad = eventosActividad;
+    }
+
+    public void agregarRegistroHistorial(int turno, int plantas, int conejos, int lobos) {
+        historial.add(new int[]{turno, plantas, conejos, lobos});
+    }
 }

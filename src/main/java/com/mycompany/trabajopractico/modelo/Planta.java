@@ -18,6 +18,12 @@ public class Planta extends Entidad implements Reproducible {
         this.tamanio = limitarTamanio(tamanio);
     }
 
+    /** Constructor para reconstruir una planta guardada. */
+    public Planta(String nombre, double energia, int edad, int tamanio) {
+        super(nombre, energia, edad);
+        this.tamanio = limitarTamanio(tamanio);
+    }
+
     private int limitarTamanio(int valor) {
         if (valor < 1) {
             return 1;

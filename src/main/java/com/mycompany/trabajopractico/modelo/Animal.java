@@ -15,6 +15,13 @@ public abstract class Animal extends Entidad implements Mortal {
         this.peso = peso;
     }
 
+    /** Constructor para reconstruir un animal guardado (con su edad). */
+    public Animal(String nombre, double energia, int edad, int velocidad, double peso) {
+        super(nombre, energia, edad);
+        this.velocidad = velocidad;
+        this.peso = peso;
+    }
+
     public abstract void comer(Ecosistema eco);
 
     public int getVelocidad() {

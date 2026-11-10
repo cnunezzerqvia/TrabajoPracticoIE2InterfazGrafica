@@ -1,4 +1,4 @@
-# Simulador de Ecosistema — versión Swing
+# Simulador de Ecosistema — versión Swing (2.ª instancia evaluativa)
 
 Transformación del simulador de la IE1 (que corría en la terminal) en una aplicación de escritorio
 con interfaz gráfica en **Swing**, arquitectura **MVC en paquetes separados** y guardado de la
@@ -14,4 +14,4 @@ Proyecto en construcción. Estructura de paquetes:
 - `...controlador`: coordina vista, modelo y DAO (próximamente).
 - `...vista`: interfaz Swing hecha con el diseñador de NetBeans (próximamente).
 
-
+**Figma**: (pegar acá el link al archivo de Figma)

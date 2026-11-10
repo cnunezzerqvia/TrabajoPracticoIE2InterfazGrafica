@@ -12,6 +12,11 @@ public class Conejo extends Animal implements Reproducible {
         super(nombre, energia, 5, 3.0);
     }
 
+    /** Constructor para reconstruir un conejo guardado. */
+    public Conejo(String nombre, double energia, int edad) {
+        super(nombre, energia, edad, 5, 3.0);
+    }
+
     @Override
     public void actuar(Ecosistema eco) {
         if (!estaVivo()) {

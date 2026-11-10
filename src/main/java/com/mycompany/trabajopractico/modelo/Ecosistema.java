@@ -343,6 +343,31 @@ public class Ecosistema {
         return plantas.isEmpty() || conejos.isEmpty() || lobos.isEmpty();
     }
 
+    // ===================== Usado por el DAO al retomar =====================
+
+    /** Restaura los datos que no se pueden calcular a partir de las entidades. */
+    public void restaurarEstado(int turno, int idPlanta, int idConejo, int idLobo,
+            List<String> eventos) {
+        this.turnoActual = turno;
+        this.ultimoIdPlanta = idPlanta;
+        this.ultimoIdConejo = idConejo;
+        this.ultimoIdLobo = idLobo;
+        this.eventosTurno.clear();
+        this.eventosTurno.addAll(eventos);
+    }
+
+    public int getUltimoIdPlanta() {
+        return ultimoIdPlanta;
+    }
+
+    public int getUltimoIdConejo() {
+        return ultimoIdConejo;
+    }
+
+    public int getUltimoIdLobo() {
+        return ultimoIdLobo;
+    }
+
     // ===================== Getters =====================
 
     public Clima getClimaActual() {

@@ -1,5 +1,7 @@
 package com.mycompany.trabajopractico;
 
+import com.mycompany.trabajopractico.dao.SimulacionDAO;
+import com.mycompany.trabajopractico.dao.SimulacionDAOTxt;
 import com.mycompany.trabajopractico.modelo.Clima;
 import com.mycompany.trabajopractico.modelo.Ecosistema;
 import com.mycompany.trabajopractico.modelo.Estadisticas;
@@ -37,6 +39,16 @@ public class TrabajoPractico {
         System.out.println("Lobo con más cacerías: " + est.getLoboMasCacerias()
                 + " (" + est.getMaxCacerias() + ")");
         System.out.println("Turno de mayor actividad: " + est.getTurnoMayorActividad());
+
+        SimulacionDAO dao = new SimulacionDAOTxt("datos/simulacion.txt");
+        System.out.println("¿Se guardó? " + dao.guardar(simulacion));
+        Simulacion cargada = dao.cargar();
+        if (cargada == null) {
+            System.out.println("Error al cargar: " + dao.getUltimoError());
+        } else {
+            System.out.println("Cargada OK: turno " + cargada.getEcosistema().getTurnoActual()
+                    + ", " + cargada.getEcosistema().getEntidades().size() + " entidades vivas.");
+        }
     }
 
     private static void imprimir(List<String> eventos) {

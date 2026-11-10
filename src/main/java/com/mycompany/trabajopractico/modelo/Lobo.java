@@ -18,6 +18,12 @@ public class Lobo extends Animal {
         this.exitosCaza = 0;
     }
 
+    /** Constructor para reconstruir un lobo guardado (con sus cacerías). */
+    public Lobo(String nombre, double energia, int edad, int exitosCaza) {
+        super(nombre, energia, edad, 8, 35.0);
+        this.exitosCaza = Math.max(0, exitosCaza);
+    }
+
     @Override
     public void actuar(Ecosistema eco) {
         if (!estaVivo()) {

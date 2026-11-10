@@ -18,6 +18,15 @@ public abstract class Entidad {
         this.viva = this.energia > 0;
     }
 
+    /**
+     * Constructor usado por el DAO para volver a armar una entidad guardada
+     * (con la edad que tenía al momento de guardar).
+     */
+    public Entidad(String nombre, double energia, int edad) {
+        this(nombre, energia);
+        this.edad = Math.max(0, edad);
+    }
+
     /** Lo que hace la entidad en su turno (cada subclase lo resuelve distinto). */
     public abstract void actuar(Ecosistema eco);
 
