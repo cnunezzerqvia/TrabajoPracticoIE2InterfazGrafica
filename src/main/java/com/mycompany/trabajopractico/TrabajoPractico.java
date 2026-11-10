@@ -2,6 +2,8 @@ package com.mycompany.trabajopractico;
 
 import com.mycompany.trabajopractico.modelo.Clima;
 import com.mycompany.trabajopractico.modelo.Ecosistema;
+import com.mycompany.trabajopractico.modelo.Estadisticas;
+import com.mycompany.trabajopractico.modelo.Simulacion;
 import java.util.List;
 
 /**
@@ -16,12 +18,25 @@ public class TrabajoPractico {
         eco.poblar(10, 5, 2);
         imprimir(eco.getEventosTurno());
 
-        for (int turno = 1; turno <= 10 && !eco.estaColapsado(); turno++) {
-            System.out.println("===== Turno " + turno + " =====");
-            imprimir(eco.procesarTurno());
+        Simulacion simulacion = new Simulacion(eco, 12);
+        while (!simulacion.estaTerminada()) {
+            System.out.println("===== Turno " + (eco.getTurnoActual() + 1) + " =====");
+            imprimir(simulacion.avanzarTurno());
             System.out.println("Plantas: " + eco.getPlantas().size() + " | Conejos: "
                     + eco.getConejos().size() + " | Lobos: " + eco.getLobos().size());
         }
+
+        System.out.println();
+        System.out.println(simulacion.getCausaFin());
+        Estadisticas est = eco.getEstadisticas();
+        for (int i = 0; i < Estadisticas.TIPOS.length; i++) {
+            System.out.println(Estadisticas.TIPOS[i] + ": nacimientos=" + est.getNacimientos(i)
+                    + ", muertes=" + est.getMuertes(i) + ", más longeva="
+                    + est.getNombreMasLongeva(i) + " (" + est.getEdadMasLongeva(i) + ")");
+        }
+        System.out.println("Lobo con más cacerías: " + est.getLoboMasCacerias()
+                + " (" + est.getMaxCacerias() + ")");
+        System.out.println("Turno de mayor actividad: " + est.getTurnoMayorActividad());
     }
 
     private static void imprimir(List<String> eventos) {

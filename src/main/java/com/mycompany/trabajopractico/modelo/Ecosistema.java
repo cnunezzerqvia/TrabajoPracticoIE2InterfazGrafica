@@ -32,6 +32,9 @@ public class Ecosistema {
     /** Entidades que murieron comidas/cazadas en este turno (para no repetir el evento). */
     private final Set<Entidad> presasDelTurno = new HashSet<>();
 
+    /** Datos acumulados para el reporte final. */
+    private final Estadisticas estadisticas = new Estadisticas();
+
     /** Contadores para que los nombres no se repitan aunque mueran entidades. */
     private int ultimoIdPlanta;
     private int ultimoIdConejo;
@@ -63,6 +66,7 @@ public class Ecosistema {
         registrarEvento("Se creó el ecosistema con " + plantas.size() + " plantas, "
                 + conejos.size() + " conejos y " + lobos.size() + " lobos. Clima: "
                 + climaActual.getNombre() + ".");
+        estadisticas.registrarPoblacion(0, plantas.size(), conejos.size(), lobos.size());
     }
 
     private double energiaInicial() {
@@ -181,11 +185,15 @@ public class Ecosistema {
 
         // 4. Todas envejecen y gastan energía base
         envejecerEntidades();
+        revisarRecords();
 
         // 5. Las entidades sin energía mueren
         eliminarMuertos(plantas);
         eliminarMuertos(conejos);
         eliminarMuertos(lobos);
+
+        estadisticas.registrarActividad(turnoActual, eventosTurno.size());
+        estadisticas.registrarPoblacion(turnoActual, plantas.size(), conejos.size(), lobos.size());
 
         return getEventosTurno();
     }
@@ -246,6 +254,20 @@ public class Ecosistema {
         }
     }
 
+    /** Antes de sacar a los muertos, revisa récords de edad y de cacerías. */
+    private void revisarRecords() {
+        for (Planta planta : plantas) {
+            estadisticas.revisarLongevidad(planta);
+        }
+        for (Conejo conejo : conejos) {
+            estadisticas.revisarLongevidad(conejo);
+        }
+        for (Lobo lobo : lobos) {
+            estadisticas.revisarLongevidad(lobo);
+            estadisticas.revisarCacerias(lobo);
+        }
+    }
+
     /** Saca de la lista a los muertos y registra el evento si murieron de hambre. */
     private void eliminarMuertos(List<? extends Entidad> lista) {
         Iterator<? extends Entidad> it = lista.iterator();
@@ -257,6 +279,7 @@ public class Ecosistema {
                 if (!presasDelTurno.contains(entidad)) {
                     registrarEvento(entidad.getNombre() + " murió por falta de energía.");
                 }
+                estadisticas.registrarMuerte(entidad.getTipo());
                 it.remove();
             }
         }
@@ -283,6 +306,7 @@ public class Ecosistema {
         } else {
             return;
         }
+        estadisticas.registrarNacimiento(cria.getTipo());
         registrarEvento(nombrePadre + " se reprodujo: nació " + cria.getNombre() + ".");
     }
 
@@ -353,5 +377,9 @@ public class Ecosistema {
 
     public List<String> getEventosTurno() {
         return new ArrayList<>(eventosTurno);
+    }
+
+    public Estadisticas getEstadisticas() {
+        return estadisticas;
     }
 }
