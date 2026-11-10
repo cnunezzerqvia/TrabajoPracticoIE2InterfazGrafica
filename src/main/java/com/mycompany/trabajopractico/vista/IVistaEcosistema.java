@@ -19,6 +19,8 @@ public interface IVistaEcosistema {
 
     void mostrarPantallaSimulacion();
 
+    void mostrarPantallaReporte();
+
     // ----- Configuración -----
     void mostrarErroresConfiguracion(List<String> errores);
 
@@ -35,6 +37,11 @@ public interface IVistaEcosistema {
     void habilitarAvance(boolean habilitado);
 
     void actualizarIntervencion(boolean habilitada, String mensaje);
+
+    // ----- Reporte final -----
+    void habilitarReporte(boolean habilitado);
+
+    void mostrarReporte(String causaFin, List<Object[]> resumen, List<Object[]> porTipo);
 
     // ----- Mensajes -----
     void mostrarMensaje(String mensaje);

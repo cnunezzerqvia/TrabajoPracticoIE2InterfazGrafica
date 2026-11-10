@@ -21,6 +21,7 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
 
     private static final String PANTALLA_CONFIGURACION = "configuracion";
     private static final String PANTALLA_SIMULACION = "simulacion";
+    private static final String PANTALLA_REPORTE = "reporte";
 
     private ControladorSimulacion controlador;
 
@@ -51,6 +52,11 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
     public void mostrarPantallaSimulacion() {
         itemGuardar.setEnabled(true);
         cambiarPantalla(PANTALLA_SIMULACION);
+    }
+
+    @Override
+    public void mostrarPantallaReporte() {
+        cambiarPantalla(PANTALLA_REPORTE);
     }
 
     // ===================== Combos =====================
@@ -130,6 +136,20 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
         lblIntervencion.setText("<html><span style='color:" + color + "'>" + texto + "</span></html>");
     }
 
+    // ===================== Reporte =====================
+
+    @Override
+    public void habilitarReporte(boolean habilitado) {
+        btnVerReporte.setEnabled(habilitado);
+    }
+
+    @Override
+    public void mostrarReporte(String causaFin, List<Object[]> resumen, List<Object[]> porTipo) {
+        lblCausaFin.setText(causaFin);
+        cargarTabla(tablaResumen, resumen);
+        cargarTabla(tablaPorTipo, porTipo);
+    }
+
     /** Vacía la tabla (creada en el diseñador) y le agrega las filas recibidas. */
     private void cargarTabla(JTable tabla, List<Object[]> filas) {
         DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
@@ -179,6 +199,8 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
         itemGuardar = new javax.swing.JMenuItem();
         separadorMenu = new javax.swing.JPopupMenu.Separator();
         itemSalir = new javax.swing.JMenuItem();
+        menuReportes = new javax.swing.JMenu();
+        itemVerReporte = new javax.swing.JMenuItem();
         panelConfiguracion = new javax.swing.JPanel();
         panelEncabezadoConfig = new javax.swing.JPanel();
         lblTituloConfig = new javax.swing.JLabel();
@@ -229,7 +251,20 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
         btnAgregarEntidad = new javax.swing.JButton();
         panelBotonesSimulacion = new javax.swing.JPanel();
         btnAvanzar = new javax.swing.JButton();
+        btnVerReporte = new javax.swing.JButton();
         lblEstado = new javax.swing.JLabel();
+        panelReporte = new javax.swing.JPanel();
+        panelEncabezadoReporte = new javax.swing.JPanel();
+        lblTituloReporte = new javax.swing.JLabel();
+        lblCausaFin = new javax.swing.JLabel();
+        panelTablasReporte = new javax.swing.JPanel();
+        scrollResumen = new javax.swing.JScrollPane();
+        tablaResumen = new javax.swing.JTable();
+        scrollPorTipo = new javax.swing.JScrollPane();
+        tablaPorTipo = new javax.swing.JTable();
+        panelBotonesReporte = new javax.swing.JPanel();
+        btnVolverDesdeReporte = new javax.swing.JButton();
+        btnNuevaDesdeReporte = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Simulador de Ecosistema");
@@ -470,6 +505,15 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
         });
         panelBotonesSimulacion.add(btnAvanzar);
 
+        btnVerReporte.setText("Ver reporte final");
+        btnVerReporte.setEnabled(false);
+        btnVerReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVerReporteActionPerformed(evt);
+            }
+        });
+        panelBotonesSimulacion.add(btnVerReporte);
+
         panelSur.add(panelBotonesSimulacion, java.awt.BorderLayout.EAST);
 
         lblEstado.setForeground(new java.awt.Color(51, 51, 51));
@@ -479,6 +523,107 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
         panelSimulacion.add(panelSur, java.awt.BorderLayout.SOUTH);
 
         getContentPane().add(panelSimulacion, "simulacion");
+
+        panelReporte.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        panelReporte.setLayout(new java.awt.BorderLayout(0, 12));
+        panelEncabezadoReporte.setLayout(new java.awt.GridLayout(0, 1, 0, 6));
+        lblTituloReporte.setFont(lblTituloReporte.getFont().deriveFont(lblTituloReporte.getFont().getStyle() | java.awt.Font.BOLD, lblTituloReporte.getFont().getSize()+10));
+        lblTituloReporte.setText("Reporte final de la simulación");
+        panelEncabezadoReporte.add(lblTituloReporte);
+
+        lblCausaFin.setFont(lblCausaFin.getFont().deriveFont(lblCausaFin.getFont().getStyle() | java.awt.Font.BOLD, lblCausaFin.getFont().getSize()+2));
+        lblCausaFin.setForeground(new java.awt.Color(27, 94, 32));
+        lblCausaFin.setText("-");
+        panelEncabezadoReporte.add(lblCausaFin);
+
+        panelReporte.add(panelEncabezadoReporte, java.awt.BorderLayout.NORTH);
+
+        panelTablasReporte.setLayout(new java.awt.GridLayout(0, 1, 0, 10));
+        scrollResumen.setBorder(javax.swing.BorderFactory.createTitledBorder("Resumen general"));
+        scrollResumen.setPreferredSize(new java.awt.Dimension(700, 140));
+        tablaResumen.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Dato", "Valor"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tablaResumen.setFillsViewportHeight(true);
+        tablaResumen.setRowHeight(22);
+        scrollResumen.setViewportView(tablaResumen);
+
+        panelTablasReporte.add(scrollResumen);
+
+        scrollPorTipo.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos por tipo de entidad"));
+        scrollPorTipo.setPreferredSize(new java.awt.Dimension(700, 140));
+        tablaPorTipo.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Tipo", "Nacimientos", "Muertes", "Más longeva"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tablaPorTipo.setFillsViewportHeight(true);
+        tablaPorTipo.setRowHeight(22);
+        scrollPorTipo.setViewportView(tablaPorTipo);
+
+        panelTablasReporte.add(scrollPorTipo);
+
+        panelReporte.add(panelTablasReporte, java.awt.BorderLayout.CENTER);
+
+        panelBotonesReporte.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 10, 5));
+        btnVolverDesdeReporte.setText("Volver a la simulación");
+        btnVolverDesdeReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVolverDesdeReporteActionPerformed(evt);
+            }
+        });
+        panelBotonesReporte.add(btnVolverDesdeReporte);
+
+        btnNuevaDesdeReporte.setFont(btnNuevaDesdeReporte.getFont().deriveFont(btnNuevaDesdeReporte.getFont().getStyle() | java.awt.Font.BOLD, btnNuevaDesdeReporte.getFont().getSize()+2));
+        btnNuevaDesdeReporte.setText("Nueva simulación");
+        btnNuevaDesdeReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevaDesdeReporteActionPerformed(evt);
+            }
+        });
+        panelBotonesReporte.add(btnNuevaDesdeReporte);
+
+        panelReporte.add(panelBotonesReporte, java.awt.BorderLayout.SOUTH);
+
+        getContentPane().add(panelReporte, "reporte");
 
         menuSimulacion.setText("Simulación");
         itemNueva.setText("Nueva simulación...");
@@ -510,6 +655,17 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
 
         barraMenu.add(menuSimulacion);
 
+        menuReportes.setText("Reportes");
+        itemVerReporte.setText("Ver reporte final");
+        itemVerReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemVerReporteActionPerformed(evt);
+            }
+        });
+        menuReportes.add(itemVerReporte);
+
+        barraMenu.add(menuReportes);
+
         setJMenuBar(barraMenu);
 
         pack();
@@ -538,6 +694,18 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
         controlador.avanzarTurno();
     }//GEN-LAST:event_btnAvanzarActionPerformed
 
+    private void btnVerReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerReporteActionPerformed
+        controlador.verReporte();
+    }//GEN-LAST:event_btnVerReporteActionPerformed
+
+    private void btnVolverDesdeReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverDesdeReporteActionPerformed
+        controlador.volverASimulacion();
+    }//GEN-LAST:event_btnVolverDesdeReporteActionPerformed
+
+    private void btnNuevaDesdeReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevaDesdeReporteActionPerformed
+        controlador.nuevaSimulacion();
+    }//GEN-LAST:event_btnNuevaDesdeReporteActionPerformed
+
     private void itemNuevaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemNuevaActionPerformed
         controlador.nuevaSimulacion();
     }//GEN-LAST:event_itemNuevaActionPerformed
@@ -550,12 +718,19 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
         controlador.salir();
     }//GEN-LAST:event_itemSalirActionPerformed
 
+    private void itemVerReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemVerReporteActionPerformed
+        controlador.verReporte();
+    }//GEN-LAST:event_itemVerReporteActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuBar barraMenu;
     private javax.swing.JButton btnAgregarEntidad;
     private javax.swing.JButton btnAvanzar;
     private javax.swing.JButton btnCambiarClima;
     private javax.swing.JButton btnIniciar;
+    private javax.swing.JButton btnNuevaDesdeReporte;
+    private javax.swing.JButton btnVerReporte;
+    private javax.swing.JButton btnVolverDesdeReporte;
     private javax.swing.JButton btnVolverSimulacion;
     private javax.swing.JComboBox<String> cmbClima;
     private javax.swing.JComboBox<String> cmbNuevoClima;
@@ -563,12 +738,14 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
     private javax.swing.JMenuItem itemGuardar;
     private javax.swing.JMenuItem itemNueva;
     private javax.swing.JMenuItem itemSalir;
+    private javax.swing.JMenuItem itemVerReporte;
     private javax.swing.JLabel lblAyudaClima;
     private javax.swing.JLabel lblCampoClima;
     private javax.swing.JLabel lblCampoConejos;
     private javax.swing.JLabel lblCampoLobos;
     private javax.swing.JLabel lblCampoPlantas;
     private javax.swing.JLabel lblCampoTurnos;
+    private javax.swing.JLabel lblCausaFin;
     private javax.swing.JLabel lblClima;
     private javax.swing.JLabel lblConejos;
     private javax.swing.JLabel lblErroresConfig;
@@ -585,25 +762,35 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
     private javax.swing.JLabel lblSubtituloConfig;
     private javax.swing.JLabel lblTipoEntidad;
     private javax.swing.JLabel lblTituloConfig;
+    private javax.swing.JLabel lblTituloReporte;
     private javax.swing.JLabel lblTurno;
     private javax.swing.JList<String> listaEventos;
+    private javax.swing.JMenu menuReportes;
     private javax.swing.JMenu menuSimulacion;
     private javax.swing.JPanel panelAccionesConfig;
     private javax.swing.JPanel panelBotonesConfig;
+    private javax.swing.JPanel panelBotonesReporte;
     private javax.swing.JPanel panelBotonesSimulacion;
     private javax.swing.JPanel panelCentroConfig;
     private javax.swing.JPanel panelConfiguracion;
     private javax.swing.JPanel panelContadores;
     private javax.swing.JPanel panelControlesIntervencion;
     private javax.swing.JPanel panelEncabezadoConfig;
+    private javax.swing.JPanel panelEncabezadoReporte;
     private javax.swing.JPanel panelFormulario;
     private javax.swing.JPanel panelIntervencion;
+    private javax.swing.JPanel panelReporte;
     private javax.swing.JPanel panelSimulacion;
     private javax.swing.JPanel panelSur;
+    private javax.swing.JPanel panelTablasReporte;
     private javax.swing.JScrollPane scrollEntidades;
     private javax.swing.JScrollPane scrollEventos;
+    private javax.swing.JScrollPane scrollPorTipo;
+    private javax.swing.JScrollPane scrollResumen;
     private javax.swing.JPopupMenu.Separator separadorMenu;
     private javax.swing.JTable tablaEntidades;
+    private javax.swing.JTable tablaPorTipo;
+    private javax.swing.JTable tablaResumen;
     private javax.swing.JTextField txtConejos;
     private javax.swing.JTextField txtLobos;
     private javax.swing.JTextField txtPlantas;

@@ -5,6 +5,7 @@ import com.mycompany.trabajopractico.modelo.Clima;
 import com.mycompany.trabajopractico.modelo.Conejo;
 import com.mycompany.trabajopractico.modelo.Ecosistema;
 import com.mycompany.trabajopractico.modelo.Entidad;
+import com.mycompany.trabajopractico.modelo.Estadisticas;
 import com.mycompany.trabajopractico.modelo.Lobo;
 import com.mycompany.trabajopractico.modelo.Planta;
 import com.mycompany.trabajopractico.modelo.Simulacion;
@@ -155,7 +156,7 @@ public class ControladorSimulacion {
                 + " procesado: " + eventos.size() + " eventos.");
 
         if (simulacion.estaTerminada()) {
-            vista.mostrarMensaje("Fin de la simulación. " + simulacion.getCausaFin());
+            mostrarReporte();
         }
     }
 
@@ -275,6 +276,53 @@ public class ControladorSimulacion {
         vista.cerrar();
     }
 
+    // ===================== Reporte final =====================
+
+    public void verReporte() {
+        if (simulacion == null) {
+            vista.mostrarError("Todavía no hay una simulación en curso.");
+            return;
+        }
+        if (!simulacion.estaTerminada()) {
+            int faltan = simulacion.getTurnosTotales() - simulacion.getEcosistema().getTurnoActual();
+            vista.mostrarError("El reporte final está disponible cuando termina la simulación.\n"
+                    + "Faltan " + faltan + " turnos (o que se extinga alguna población).");
+            return;
+        }
+        mostrarReporte();
+    }
+
+    private void mostrarReporte() {
+        Ecosistema eco = simulacion.getEcosistema();
+        Estadisticas est = eco.getEstadisticas();
+
+        List<Object[]> resumen = new ArrayList<>();
+        resumen.add(new Object[]{"Turnos jugados",
+            eco.getTurnoActual() + " de " + simulacion.getTurnosTotales()});
+        resumen.add(new Object[]{"Clima final", eco.getClimaActual().getNombre()});
+        resumen.add(new Object[]{"Población final", "Plantas: " + eco.getPlantas().size()
+            + "   |   Conejos: " + eco.getConejos().size()
+            + "   |   Lobos: " + eco.getLobos().size()});
+        resumen.add(new Object[]{"Turno de mayor actividad",
+            est.getTurnoMayorActividad() == 0 ? "-"
+            : "Turno " + est.getTurnoMayorActividad() + " (" + est.getEventosMayorActividad()
+            + " eventos)"});
+        resumen.add(new Object[]{"Lobo con más cacerías",
+            est.getMaxCacerias() == 0 ? "Ningún lobo logró cazar"
+            : est.getLoboMasCacerias() + " (" + est.getMaxCacerias() + " cacerías exitosas)"});
+
+        List<Object[]> porTipo = new ArrayList<>();
+        for (int i = 0; i < Estadisticas.TIPOS.length; i++) {
+            String longeva = est.getEdadMasLongeva(i) == 0 ? "-"
+                    : est.getNombreMasLongeva(i) + " (" + est.getEdadMasLongeva(i) + " turnos)";
+            porTipo.add(new Object[]{Estadisticas.TIPOS[i], est.getNacimientos(i),
+                est.getMuertes(i), longeva});
+        }
+
+        vista.mostrarReporte(simulacion.getCausaFin(), resumen, porTipo);
+        vista.mostrarPantallaReporte();
+    }
+
     // ===================== Comunes =====================
 
     /** Guarda con el DAO; si falla, avisa a la vista. */
@@ -297,6 +345,7 @@ public class ControladorSimulacion {
         vista.actualizarEventos(eco.getTurnoActual(), eco.getEventosTurno());
         vista.habilitarAvance(!simulacion.estaTerminada());
         vista.actualizarIntervencion(simulacion.puedeIntervenir(), mensajeIntervencion());
+        vista.habilitarReporte(simulacion.estaTerminada());
     }
 
     /** Convierte las entidades del modelo en filas simples para la tabla. */
