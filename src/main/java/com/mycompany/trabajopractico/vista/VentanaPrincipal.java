@@ -150,6 +150,11 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
         cargarTabla(tablaPorTipo, porTipo);
     }
 
+    @Override
+    public void mostrarHistorial(List<Object[]> historial) {
+        cargarTabla(tablaHistorial, historial);
+    }
+
     /** Vacía la tabla (creada en el diseñador) y le agrega las filas recibidas. */
     private void cargarTabla(JTable tabla, List<Object[]> filas) {
         DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
@@ -262,6 +267,8 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
         tablaResumen = new javax.swing.JTable();
         scrollPorTipo = new javax.swing.JScrollPane();
         tablaPorTipo = new javax.swing.JTable();
+        scrollHistorial = new javax.swing.JScrollPane();
+        tablaHistorial = new javax.swing.JTable();
         panelBotonesReporte = new javax.swing.JPanel();
         btnVolverDesdeReporte = new javax.swing.JButton();
         btnNuevaDesdeReporte = new javax.swing.JButton();
@@ -394,18 +401,21 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
         panelContadores.add(lblClima);
 
         lblPlantas.setFont(lblPlantas.getFont().deriveFont(lblPlantas.getFont().getStyle() | java.awt.Font.BOLD, lblPlantas.getFont().getSize()+6));
+        lblPlantas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/planta.png"))); // NOI18N
         lblPlantas.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblPlantas.setText("0");
         lblPlantas.setBorder(javax.swing.BorderFactory.createTitledBorder("Plantas"));
         panelContadores.add(lblPlantas);
 
         lblConejos.setFont(lblConejos.getFont().deriveFont(lblConejos.getFont().getStyle() | java.awt.Font.BOLD, lblConejos.getFont().getSize()+6));
+        lblConejos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/conejo.png"))); // NOI18N
         lblConejos.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblConejos.setText("0");
         lblConejos.setBorder(javax.swing.BorderFactory.createTitledBorder("Conejos"));
         panelContadores.add(lblConejos);
 
         lblLobos.setFont(lblLobos.getFont().deriveFont(lblLobos.getFont().getStyle() | java.awt.Font.BOLD, lblLobos.getFont().getSize()+6));
+        lblLobos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/lobo.png"))); // NOI18N
         lblLobos.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblLobos.setText("0");
         lblLobos.setBorder(javax.swing.BorderFactory.createTitledBorder("Lobos"));
@@ -577,14 +587,14 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
 
             },
             new String [] {
-                "Tipo", "Nacimientos", "Muertes", "Más longeva"
+                "Tipo", "Nacimientos", "Muertes", "Más longeva", "Población máxima", "Población mínima"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class
+                java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -600,6 +610,37 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
         scrollPorTipo.setViewportView(tablaPorTipo);
 
         panelTablasReporte.add(scrollPorTipo);
+
+        scrollHistorial.setBorder(javax.swing.BorderFactory.createTitledBorder("Historial de población por turno"));
+        scrollHistorial.setPreferredSize(new java.awt.Dimension(700, 140));
+        tablaHistorial.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Turno", "Plantas", "Conejos", "Lobos"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tablaHistorial.setFillsViewportHeight(true);
+        tablaHistorial.setRowHeight(22);
+        scrollHistorial.setViewportView(tablaHistorial);
+
+        panelTablasReporte.add(scrollHistorial);
 
         panelReporte.add(panelTablasReporte, java.awt.BorderLayout.CENTER);
 
@@ -785,10 +826,12 @@ public class VentanaPrincipal extends javax.swing.JFrame implements IVistaEcosis
     private javax.swing.JPanel panelTablasReporte;
     private javax.swing.JScrollPane scrollEntidades;
     private javax.swing.JScrollPane scrollEventos;
+    private javax.swing.JScrollPane scrollHistorial;
     private javax.swing.JScrollPane scrollPorTipo;
     private javax.swing.JScrollPane scrollResumen;
     private javax.swing.JPopupMenu.Separator separadorMenu;
     private javax.swing.JTable tablaEntidades;
+    private javax.swing.JTable tablaHistorial;
     private javax.swing.JTable tablaPorTipo;
     private javax.swing.JTable tablaResumen;
     private javax.swing.JTextField txtConejos;

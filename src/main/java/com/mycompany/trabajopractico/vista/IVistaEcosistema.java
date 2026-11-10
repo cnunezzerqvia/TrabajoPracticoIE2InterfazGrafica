@@ -43,6 +43,8 @@ public interface IVistaEcosistema {
 
     void mostrarReporte(String causaFin, List<Object[]> resumen, List<Object[]> porTipo);
 
+    void mostrarHistorial(List<Object[]> historial);
+
     // ----- Mensajes -----
     void mostrarMensaje(String mensaje);
 

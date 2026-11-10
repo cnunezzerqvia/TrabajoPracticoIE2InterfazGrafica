@@ -315,11 +315,21 @@ public class ControladorSimulacion {
         for (int i = 0; i < Estadisticas.TIPOS.length; i++) {
             String longeva = est.getEdadMasLongeva(i) == 0 ? "-"
                     : est.getNombreMasLongeva(i) + " (" + est.getEdadMasLongeva(i) + " turnos)";
+            int[] maximo = est.maximoPoblacion(i);
+            int[] minimo = est.minimoPoblacion(i);
             porTipo.add(new Object[]{Estadisticas.TIPOS[i], est.getNacimientos(i),
-                est.getMuertes(i), longeva});
+                est.getMuertes(i), longeva,
+                maximo[0] + " (turno " + maximo[1] + ")",
+                minimo[0] + " (turno " + minimo[1] + ")"});
         }
 
         vista.mostrarReporte(simulacion.getCausaFin(), resumen, porTipo);
+
+        List<Object[]> historial = new ArrayList<>();
+        for (int[] fila : est.getHistorial()) {
+            historial.add(new Object[]{fila[0], fila[1], fila[2], fila[3]});
+        }
+        vista.mostrarHistorial(historial);
         vista.mostrarPantallaReporte();
     }
 
